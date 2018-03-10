@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="main.css"/>
+    
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    
+</head>
+
+<body>
+    <header><i class="material-icons md-18"><i class="material-icons">assignment_turned_in</i></i>LCAT Portable Equipment Request Form</header>
+  <main class="cubre">  
+    <aside id="menu-area">
+        <nav>
+            <a class="btn-nav" href="home.html"><i class="material-icons derecha">home</i> Home</a>
+            <a class="btn-nav" href="lcat-eq.html"><i class="material-icons derecha">add</i> New Request</a>
+            <a class="btn-nav" href="equipment.html"><i class="material-icons derecha">videocam</i> Equipment</a>
+             <a class="currentpage" href="renters.html"><i class="material-icons derecha">face</i> Renters</a>
+            <a class="btn-nav" href="consult.html"><i class="material-icons derecha">book</i>Consult</a>
+        </nav>
+    </aside>
+    <section id="main-area">
+        <div class="box-form">Add New Renter</div>
+        <form>
+            <!First Line of the Form -->
+
+            <input id="label-name" name ="firstname" placeholder="Firstname" size="20" type="text"/>
+                
+            <input id="label-lastname" name ="lastname" placeholder="Lastname" size="20" type="text"/>
+                
+            <input id="label-date" name="date" type="date"/>
+            <br>
+<!--
+            <label for="label-address">Address:</label>
+            <br>
+-->
+            <input id="label-address" placeholder="Address" type="text" size="66"/>
+            <br>
+<!--            <label for="label-state">City</label>-->
+                
+<!--            <label for="label-zip" size="5" style="margin-left: 90px;">State</label>-->
+<!--            <label for="label-zip" style="margin-left: 60px;">Zip Code</label>-->
+
+            <input id="label-city" placeholder="City" list="city" size="14" style="font-variant-caps:all-caps"/>
+                <datalist id="city">
+                <option value="Lawrence">
+                <option value="Haverhill">
+                <option value="Methuen">
+                <option value="Lowell">
+                <option value="Dracut">
+                <option value="Boston">
+                <option value="Lynn">
+                <option value="Dorchester">
+                <option value="Springfield">
+                <option value="Andover">
+                </datalist>
+            <!--<input id="label-state" placeholder="State" list="states" size="10" style="font-variant-caps:all-caps;"/>
+                <datalist id="states">
+                <option value="MA">
+                <option value="CT">
+                <option value="NY">
+                <option value="ME">
+                <option value="NJ">
+                <option value="FL">
+                <option value="CA">
+                <option value="VT">
+                <option value="TX">
+                <option value="AR">
+                </datalist>
+<br>-->
+            <input id="label-zip" placeholder="Zip Code" type="number"/> 
+            <input id="label-phone" placeholder="Phone" type="text" size=27/>
+            <br>
+            <input id="label-email" placeholder="Email" type="email" size=37/>
+            
+            
+            
+            
+<!--            Table to display info            -->
+            <div id="save">Save Changes</div><div id="cancel">Cancel</div> 
+            
+        </form>
+        <div class="box-form">Equipment Available</div>
+       <!-- <div class="add-stuff"> -->
+            <table style="width:100%" class="table">
+                <thead id="equipmentHead">
+                <tr>
+                <th>Number</th>
+                <th>names</th>
+                <th>address</th>
+                <th>city</th>
+                <th>zip code</th>
+                <th>phone</th>
+                <th>emails</th>
+                <th>created date</th>
+                <th>Options</th>
+                </tr>
+                </thead>
+                
+                <tbody id="equipmentBody">
+                <tr><td colspan="5"></td></tr>
+                </tbody>
+            </table>
+            
+        <!--</div> -->
+    </section>
+    </main>
+   <footer>LCAT 08/16/2017</footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+ crossorigin="anonymous"></script>
+          
+    <script>      
+    $(function(){
+        //function to fetch all data from a object
+        function equipmentList(equipList){
+              $.each(equipList, function(index, list){ 
+               $('#equipmentBody').append(
+              '<tr class = "rowParent" ><td>'+ list.id +'</td>'
+               +'<td><span class = "rowFirstName">'+ list.first_name +'</span> <span class = "rowLastName">'+list.last_name+'</span></td>'
+               +'<td class = "rowAddress">'+ list.address +'</td>'
+               +'<td class = "rowCity">'+ list.city +'</td>'
+               +'<td class = "rowZipCode">'+ list.zip_code +'</td>'
+               +'<td class = "rowPhone">'+ list.phone +'</td>'
+               +'<td class = "rowEmail">'+ list.email +'</td>'
+               +'<td class = "rowCreateDate">'+ list.created_date +'</td>'
+               +'<td><i class="material-icons edit" id="edit-index">edit<input type="hidden" class="renters-index-edit" value="' + list.id + '"></i><div class = "deleteDiv" style="display: inline;"><i class="material-icons delete" id="delete-index">delete<input type="hidden" class="renters-index-delete" value="' + list.id + '"></i></div></td></tr>');                                     
+              });
+            
+             //When click on DELETE Button
+        $('.material-icons.delete').on('click', function(){
+            var parentRow = $(this).parents('.rowParent');
+            var typeNamefirst = $(parentRow).find('.rowFirstName').text();
+            var typeNamelast = $(parentRow).find('.rowLastName').text();
+            var confirmDelete = confirm('Do you want to delete ' + typeNamefirst +' '+typeNamelast + '?');
+
+            if(confirmDelete){
+                var equipmentID = $(parentRow).find('.renters-index-delete').val();
+
+                $.ajax({
+                    url: '/LCATProject/PHP/delete_renters.php',
+                    type:'POST',
+                    dataType:'json',
+                    data:{ id : equipmentID },
+                    success: function(data){
+                        alert('Info deleted'+data);
+                        loadingData();
+                    },
+                    complete: function(){
+                        
+                    }
+                });    
+          }
+            
+        });
+            //Edit the row
+            $('.material-icons.edit').on('click', function(){
+            var parentRow = $(this).parents('.rowParent');
+                
+                var idRow = $(parentRow).find('.renters-index-edit').val();
+                var renterFirstName = $(parentRow).find('.rowFirstName').text();
+                var renterLastName = $(parentRow).find('.rowLastName').text();
+                var renterAddress = $(parentRow).find('.rowAddress').text();
+                var renterCity = $(parentRow).find('.rowCity').text();
+                var renterZipCode = $(parentRow).find('.rowZipCode').text();
+                var renterPhone = $(parentRow).find('.rowPhone').text();
+                var renterEmail = $(parentRow).find('.rowEmail').text();
+                var renterCreateDate = $(parentRow).find('.rowCreateDate').text();
+
+            var structureRow = '<td>'+ idRow +'</td>'
+           +'<td><input placeholder ="FirstName" value="'+ renterFirstName +'" id="renterFirstName" type="text" size=9 /><input placeholder ="LastName" value="'+ renterLastName +'" id="renterLastName" type="text" size=9 /></td>'
+           +'<td class = "renterAddress"><input value="'+ renterAddress +'" id="renterCurrentAddress" type="text" size=14/></td>'
+           +'<td class = "renterCity"><input value="'+ renterCity +'" id="renterCurrentCity" type="text" size=9/></td>'
+           +'<td class = "renterZipCode"><input value="'+ renterZipCode +'" id="renterCurrentZipCode" type="number" size=6/></td>'
+           +'<td class = "renterPhone"><input value="'+ renterPhone +'" id="renterCurrentPhone" type="text" size=12/></td>'
+           +'<td class = "renterEmail"><input value="'+ renterEmail +'" id="renterCurrentEmail" type="email" /></td>'
+           +'<td class = "renterCreateDate"><input value="'+ renterCreateDate +'" id="renterCurrentCreateDate" type="date" size=9/></td>'
+           +'<td>'+'<i class="material-icons save" id="save-index">save<input type="hidden" class="equip-index-save" value="' + idRow + '"></i></td>';
+                
+                $(parentRow).empty();
+                
+                $(parentRow).append(structureRow);
+            
+                $('.material-icons.save').on('click', function(){
+                    
+                    var currentFirstName = $(parentRow).find('#renterFirstName').val();
+                    var currentLastName = $(parentRow).find('#renterLastName').val();
+                    var currentCurrentAddress = $(parentRow).find('#renterCurrentAddress').val();
+                    var currentCurrentCity = $(parentRow).find('#renterCurrentCity').val();
+                    var currentCurrentZipCode = $(parentRow).find('#renterCurrentZipCode').val();
+                    var currentCurrentPhone = $(parentRow).find('#renterCurrentPhone').val();
+                    var currentCurrentEmail = $(parentRow).find('#renterCurrentEmail').val();
+                    var currentCurrentCreateDate = $(parentRow).find('#renterCurrentCreateDate').val();
+
+                    $.ajax({
+                        url:'/LCATProject/PHP/insert_renters.php',
+                        type:'POST',
+                        dataType:'json',
+                        data:{id : idRow, first_name: currentFirstName, last_name: currentLastName, address: currentCurrentAddress, city: currentCurrentCity, zip_code: currentCurrentZipCode, phone: currentCurrentPhone, email: currentCurrentEmail, created_date: currentCurrentCreateDate},
+                        success: function (data){
+                        
+                        }, complete: function(){
+                            loadingData();
+                        }
+                    });
+                });
+                
+        });
+                  }
+                                                                        
+       //End of the function to fetch all data from a object
+        
+     loadingData();
+    /*Reading a JSON file to pull all the data and send it to the function equipmentList(equipList) */  
+        function loadingData(){
+            $('#equipmentBody').empty();
+            $.ajax('/LCATProject/PHP/get_renters.php', {
+            type: 'GET',
+            dataType: 'json',
+            success: function(response){
+                equipmentList(response);
+            }
+        });
+                   }
+  //End of the Ajax
+        
+        
+        $('form').on('click','#save', function (){
+            
+                    var firstName = $('#label-name').val();
+                    var lastName = $('#label-lastname').val();
+                    var inputAddress = $('#label-address').val();
+                    var inputCity = $('#label-city').val();
+                    var zipCode = $('#label-zip').val();
+                    var inputPhone = $('#label-phone').val();
+                    var inputEmail = $('#label-email').val();
+                    var createDate = $('#label-date').val();
+
+                    if (!firstName){
+                        alert('Type Firstname!');
+                        $('form').find('#label-name').focus();
+                    }else if (!lastName){
+                            alert('Type Lastname!');
+                            $('form').find('#label-lastname').focus();
+                        }else if (!inputAddress){
+                            alert('Type the Address!');
+                            $('form').find('#label-address').focus();
+                        }else if (!inputCity){
+                            alert('Type the City!');
+                            $('form').find('#label-city').focus();
+                        }else if (!zipCode){
+                            alert('Type Zip Code!');
+                            $('form').find('#label-zip').focus();
+                        }else if (!inputPhone){
+                            alert('Type Phone!');
+                            $('form').find('#label-phone').focus();
+                        }else if (!inputEmail){
+                            alert('Type Email!');
+                            $('form').find('#label-email').focus();
+                        }else if (!createDate){
+                            alert('Select or type the correct date!');
+                            $('form').find('#label-date').focus();
+                         
+                        }else{
+                    
+                           $.ajax({
+                        url:'/LCATProject/PHP/insert_renters.php',
+                        type:'POST',
+                        dataType:'json',
+                        data:{first_name: firstName, last_name: lastName, address: inputAddress, city: inputCity, zip_code: zipCode, phone: inputPhone, email: inputEmail, created_date: createDate},
+                        success: function (data){
+                            loadingData();
+                            clearData ();
+                        }
+                    });
+                        }
+
+            });
+        
+        function clearData (){
+            $('#label-name').val('');
+            $('#label-lastname').val('');
+            $('#label-address').val('');
+            $('#label-city').val('');
+            $('#label-zip').val('');
+            $('#label-phone').val('');
+            $('#label-email').val('');
+            $('#label-date').val('');
+        }
+        
+        $('#cancel').on('click', function (){
+            
+            clearData ();
+            
+        });
+        
+
+    //end of the document ready
+        });
+          
+        
+    </script>
+    
+</body>
+
+</html>

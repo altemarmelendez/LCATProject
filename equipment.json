@@ -1,0 +1,83 @@
+[
+            {
+                "number":"001",
+                "type":"Cameras",
+                "model":"Sony",
+                "amount":10,
+                "note":"This is a good cam",
+                "year":"02/14/2015"
+            },          
+            {
+                "number":"002",
+                "type":"Tripods",
+                "model":"Groton",
+                "amount":12,
+                "note":"This is a nice tripod",
+                "year":"01/03/2016"
+            },           
+            {
+                "number":"003",
+                "type":"Microphones",
+                "model":"Sony",
+                "amount":13,
+                "note":"High Fidelity in sound",
+                "year":"06/11/2014"
+            },           
+            {
+                "number":"004",
+                "type":"Extension Cords",
+                "model":"Elct",
+                "amount":19,
+                "note":"These are very thick",
+                "year":"06/08/2011"
+            },         
+            {
+                "number":"005",
+                "type":"XLR-Mini",
+                "model":"Elct",
+                "amount":25,
+                "note":"10 inch of length",
+                "year":"07/09/2012"
+            },
+            {
+                "number":"006",
+                "type":"Lights",
+                "model":"Rifa",
+                "amount":5,
+                "note":"Includes the umbrella",
+                "year":"10/23/2011"
+            },          
+            {
+                "number":"007",
+                "type":"Batteries",
+                "model":"Rayovac",
+                "amount":8,
+                "note":"3000 watts",
+                "year":"04/05/2013"
+            },        
+            {
+                "number":"008",
+                "type":"XLR-XLR",
+                "model":"SoundJass",
+                "amount":30,
+                "note":"25 inch of length",
+                "year":"05/10/2012"
+            },         
+            {
+                "number":"009",
+                "type":"XLR adapters",
+                "model":"Buba",
+                "amount":10,
+                "note":"These are golden",
+                "year":"07/09/2010"
+            },       
+            {
+                "number":"010",
+                "type":"Mixers",
+                "model":"SoundBlaster",
+                "amount":4,
+                "note":"Portables",
+                "year":"03/06/2009"
+            }
+            
+]

@@ -1,0 +1,62 @@
+[
+   {
+      "renter":"Jose Hernandez",
+      "equipment":"Camera - 2",
+      "pickUp":"12/12/2017",
+      "returnDate":"12/14/2017"
+   },
+   {
+      "renter":"Pedro Santana",
+      "equipment":"Camera - 1",
+      "pickUp":"12/02/2017",
+      "returnDate":"12/04/2017"
+   },
+   {
+      "renter":"Petronila Asuncion",
+      "equipment":"Camera - 2",
+      "pickUp":"01/03/2018",
+      "returnDate":"01/06/2018"
+   },
+   {
+      "renter":"Timoteo Alcantara",
+      "equipment":"Microphone",
+      "pickUp":"12/13/2017",
+      "returnDate":"12/17/2017"
+   },
+   {
+      "renter":"John Smith",
+      "equipment":"Light",
+      "pickUp":"12/12/2017",
+      "returnDate":"12/14/2017"
+   },
+   {
+      "renter":"Frank Lafayete",
+      "equipment":"Camera - 1",
+      "pickUp":"12/11/2017",
+      "returnDate":"12/16/2017"
+   },
+   {
+      "renter":"Jose Hernandez",
+      "equipment":"XLR-XLR",
+      "pickUp":"12/09/2017",
+      "returnDate":"12/11/2017"
+   },
+   {
+      "renter":"Jose Hernandez",
+      "equipment":"Cable Cord",
+      "pickUp":"12/12/2017",
+      "returnDate":"12/14/2017"
+   },
+   {
+      "renter":"Pedro Perez",
+      "equipment":"Camera - 1",
+      "pickUp":"12/17/2017",
+      "returnDate":"12/19/2017"
+   },
+   {
+      "renter":"Jose Hernandez",
+      "equipment":"XLR-Mini",
+      "pickUp":"12/12/2017",
+      "returnDate":"12/14/2017"
+   }
+]

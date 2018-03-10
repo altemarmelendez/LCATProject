@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="main.css"/>
+    
+    
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    
+</head>
+
+<body>
+    <header><i class="material-icons md-18"><i class="material-icons">assignment_turned_in</i></i>LCAT Portable Equipment Request Form</header>
+  <main class="cubre">  
+    <aside id="menu-area">
+        <nav>
+            <a class="btn-nav" href="home.html"><i class="material-icons derecha">home</i>Home</a>
+            <a class="btn-nav" href="lcat-eq.html"><i class="material-icons derecha">add</i>New Request</a>
+            <a class="currentpage" href="equipment.html"><i class="material-icons derecha">videocam</i>Equipment</a>
+            <a class="btn-nav" href="renters.html"><i class="material-icons derecha">face</i>Renters</a>
+            <a class="btn-nav" href="consult.html"><i class="material-icons derecha">book</i>Consult</a>
+        </nav>
+    </aside>
+    <section id="main-area">
+        <div class="box-form">Add New Equipment</div>
+        <form>
+            <!--First Line of the Form -->
+
+            <label for="type-equip" style="margin-left: 3px" class="label-style">Type of Equipment</label>
+            <br>
+            
+            <div id = "dropDownEquipType" class = "input-style">
+                
+               <input type="text" id="type-equipment" placeholder ="Types of Equipment"  style="font-size: 13px"/>                   
+
+            </div>
+            
+            <br>
+            
+            <!-- Second Line of the Form -->
+            
+            <label for="model-equip" class="label-style">Model</label>
+            <label for="amount-equip" style="margin-left: 105px" class="label-style">Amount</label>
+            <br>
+            <input type="text" id="model-equip" class="input-style" placeholder ="Model"/>
+            <input type="number" id="amount-equip" class="input-style" placeholder ="Amount"/> 
+            <br>
+            
+            <!-- 3rd Line of the Form -->
+            
+            <label for="note-equip" class="label-style">Note</label>
+            <label for="date-equip" style="margin-left: 115px" class="label-style">Year</label>
+            <br>
+            <input type="text" id="note-equip" class="input-style" placeholder ="Note"/>
+            <input type="date" id="date-equip" class="input-style" placeholder ="Date" /> 
+            <br>
+            
+            <div id="save">Save Changes</div><div id="cancel">Cancel</div>          
+        </form>
+        <div class="box-form">Equipment Available</div>
+        <div class="add-stuff">
+            <table style="width:100%" class="table">
+                <thead id="equipmentHead">
+                <tr>
+                <th>Number</th>
+                <th>Type</th>
+                <th>Model</th>
+                <th>Amount</th>
+                <th>Note</th>
+                <th>Year</th>
+                <th>Options</th>
+                </tr>
+                </thead>
+                
+                <tbody id="equipmentBody">
+                <tr><td colspan="6"></td></tr>
+                </tbody>
+            </table>
+            
+        </div>
+    </section>
+    </main>
+   <footer>LCAT 08/16/2017</footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+ crossorigin="anonymous"></script>
+          
+    <script>      
+    $(function(){
+       
+        //function to fetch all data from a object
+        function equipmentList(equipList){
+          $.each(equipList, function(index, list){ 
+           $('#equipmentBody').append(
+          '<tr class = "rowParent"><td>'+ list.id +'</td>'
+           +'<td class = "equipmentName">'+ list.equipment_type +'</td>'
+           +'<td class = "equipmentModel">'+ list.equipment_model +'</td>'
+           +'<td class = "equipmentAmount">'+ list.amount +'</td>'
+           +'<td class = "equipmentNote">'+ list.note +'</td>'
+           +'<td class = "equipmentYear">'+ list.year_equipment +'</td>'
+           +'<td>'+'<i class="material-icons edit" id="edit-index">edit<input type="hidden" class="equip-index-edit" value="' + list.id + '"></i><div class = "deleteDiv" style="display: inline;"><i class="material-icons delete" id="delete-index">delete<input type="hidden" class="equip-index-delete" value="' + list.id + '"></i></div>'+'</td></tr>');                                     
+          });
+            
+               //When click on DELETE Button
+        $('.material-icons.delete').on('click', function(){
+            var parentRow = $(this).parents('.rowParent');
+            var typeName = $(parentRow).find('.equipmentName').text();
+            var confirmDelete = confirm('Do you to delete ' + typeName);
+
+            if(confirmDelete){
+                var equipmentID = $(parentRow).find('.equip-index-delete').val();
+                alert(equipmentID);
+                $.ajax({
+                    url: '/LCATProject/PHP/delete_equipment.php',
+                    type:'POST',
+                    dataType:'json',
+                    data:{ id : equipmentID },
+                    success: function(data){
+                        alert('Info deleted ' + data[0].id +' Note: '+data[0].note);
+                    },
+                    complete: function(){
+                        loadingData();
+                    }
+                });    
+          }
+            
+        });
+            
+            $('.material-icons.edit').on('click', function(){
+            var parentRow = $(this).parents('.rowParent');
+                
+            var idRow = $(parentRow).find('.equip-index-delete').val();
+            var equipmentName = $(parentRow).find('.equipmentName').text();
+            var equipmentModel = $(parentRow).find('.equipmentModel').text();
+            var equipmentAmount = $(parentRow).find('.equipmentAmount').text();
+            var equipmentNote = $(parentRow).find('.equipmentNote').text();
+            var equipmentYear = $(parentRow).find('.equipmentYear').text();
+            
+            var structureRow = '<td>'+ idRow +'</td>'
+           +'<td class = "equipmentName"><input value="'+ equipmentName +'" id="equipName" type="text" /></td>'
+           +'<td class = "equipmentModel"><input value="'+ equipmentModel +'" id="equipModel" type="text" /></td>'
+           +'<td class = "equipmentAmount"><input value="'+ equipmentAmount +'" id="equipAmount" type="text" /></td>'
+           +'<td class = "equipmentNote"><input value="'+ equipmentNote +'" id="equipNote" type="text" /></td>'
+           +'<td class = "equipmentYear"><input value="'+ equipmentYear +'" id="equipYear" type="date" /></td>'
+           +'<td>'+'<i class="material-icons save" id="save-index">save<input type="hidden" class="equip-index-save" value="' + idRow + '"></i></td>';
+                
+                $(parentRow).empty();
+                
+                $(parentRow).append(structureRow);
+                
+                $('.material-icons.save').on('click', function(){
+                    
+                    var currentEquipType = $(parentRow).find('#equipName').val();
+                    var currentEquipModel = $(parentRow).find('#equipModel').val();
+                    var currentEquipAmount = $(parentRow).find('#equipAmount').val();
+                    var currentEquipNote = $(parentRow).find('#equipNote').val();
+                    var currentEquipYear = $(parentRow).find('#equipYear').val();
+
+                    $.ajax({
+                        url:'/LCATProject/PHP/insert_equipment.php',
+                        type:'POST',
+                        dataType:'json',
+                        data:{id : idRow, equipment_type_id: currentEquipType, equipment_model_id: currentEquipModel, amount: currentEquipAmount, note: currentEquipNote, year_equipment: currentEquipYear},
+                        success: function (data){
+                            alert('Information updated: ID: '+ data[0].id);
+                        }, complete: function(){
+                            loadingData();
+                        }
+                    });
+                });
+                
+        });
+        
+        
+        }       
+       //End of the function to fetch all data from a object
+        
+       
+    /*Reading a JSON file to pull all the data and send it to the function equipmentList(equipList) */ 
+        loadingData();
+       function loadingData(){
+           $('#equipmentBody').empty();
+           $.ajax('/LCATProject/PHP/get_equipment.php', {
+            type: 'GET',
+            dataType: 'json',
+            success: function(response){
+                equipmentList(response);
+            }
+        });
+                             }
+        
+  //End of the Ajax     
+     
+        $('#save').on('click', function (){
+            //Variables for the ID from each one of Type and Model equipment
+           
+            if($('#type-equip').val() == ''){
+                alert('Select type of equipment');
+                $('#type-equip').focus();
+            }else if($('#model-equip').val() == ''){
+                 alert('Select model of equipment');
+                $('#model-equip').focus();
+            }else if($('#amount-equip').val() == ''){
+                 alert('Select amount of equipment');
+                $('#amount-equip').focus();
+            }else if($('#note-equip').val() == ''){
+                 alert('Write a note for the equipment');
+                $('#note-equip').focus();
+            }else if($('#date-equip').val() == ''){
+                 alert('Select a date of equipment');
+                $('#date-equip').focus();
+            }else{
+            //Insert Data in Equipment, Model and Type of equipment database
+                
+                var typeDataVal = '';
+                var modelDataVal = '';
+                var typeEquipmentVal = $('form').find('#type-equipment').val();
+                var modelEquipmentVal = $('form').find('#model-equip').val();
+                var amountVal = $('form').find('#amount-equip').val();
+                var noteVal = $('form').find('#note-equip').val();
+                var dateVal = $('form').find('#date-equip').val();
+                
+                //Inserting the information in all three tables
+                $.ajax({
+                    url:'/LCATProject/PHP/insert_equipment_type.php',
+                    type: 'POST',
+                    typeData: 'json',
+                    data: {equipment_type: typeEquipmentVal},
+                    success: function(typeData){
+                        var typeDataJSON = JSON.parse(typeData);
+                        typeDataVal = typeDataJSON[0].id;
+                    }, complete: function (){
+                          
+                          $.ajax({
+                            url:'/LCATProject/PHP/insert_equipment_model.php',
+                            type: 'POST',
+                            typeData: 'json',
+                            data: {equipment_model: modelEquipmentVal},
+                            success: function(modelData){
+                                var modelDataJSON = JSON.parse(modelData);
+                                modelDataVal = modelDataJSON[0].id;
+                            }, complete: function (){
+                                    
+                                   $.ajax({
+                                    url:'/LCATProject/PHP/insert_equipment.php',
+                                    type: 'POST',
+                                    typeData: 'json',
+                                    data: {'equipment_type_id': typeDataVal, 'equipment_model_id': modelDataVal, 'amount': amountVal, 'note': noteVal, 'year_equipment': dateVal},
+                                    success: function(equipmentData){
+                                        var equipmentDataJSON = JSON.parse(equipmentData);
+                                        alert('New Equipment saved... ID# : ' +equipmentDataJSON[0].id);
+                                    },
+                                    complete: function (){
+
+                                         loadingData();
+                                     }                   
+                                });
+                            }
+                        });
+                    }
+                }); 
+            }
+           clearData ();
+        });
+        
+        
+        function clearData (){
+            
+            $('form').find('#type-equipment').val('');
+            $('form').find('#model-equip').val('');
+            $('form').find('#amount-equip').val('');
+            $('form').find('#note-equip').val('');
+            $('form').find('#date-equip').val('');
+        }
+        
+        $('#cancel').on('click', function (){
+            
+            clearData ();
+            
+        });
+        
+
+    //end of the document ready
+        });
+          
+          
+    </script>
+    
+</body>
+
+</html>

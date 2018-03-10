@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="main.css"/>
+    
+        
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    
+</head>
+
+<body>
+    <header><i class="material-icons md-18"><i class="material-icons">assignment_turned_in</i></i>LCAT Portable Equipment Request Form</header>
+    <main class="cubre">  
+    <aside id="menu-area">
+        <nav>
+            <a class="btn-nav" href="home.html"><i class="material-icons derecha">home</i>Home</a>
+            <a class="btn-nav" href="lcat-eq.html"><i class="material-icons derecha">add</i>New Request</a>
+            <a class="btn-nav" href="equipment.html"><i class="material-icons derecha">videocam</i>Equipment</a>
+            <a class="btn-nav" href="renters.html"><i class="material-icons derecha">face</i>Renters</a>
+            <a class="currentpage" href="consult.html"><i class="material-icons derecha">book</i>Consult</a>
+        </nav>
+    </aside>  
+    <section id="main-area">
+        
+        <div id="renterDetails"></div>
+        <div class="box-form"> Equipment Rented</div>
+        
+        <div class="add-stuff">
+            
+            <table style="width:100%" class="table">
+                <thead id="rentedhead">
+                <tr>
+                <th>Renter</th>
+                <th>Equipment</th>
+                <th>Pick up Date</th>
+                <th>Return Date</th>
+                <th>Delete</th>
+                </tr>
+                </thead>
+           <!-- Table of the Renter -->     
+                <tbody id="rentedbody">
+                <tr><td colspan="6"></td></tr>
+            <!-- End of the Renter's Table -->
+                </tbody>
+            </table>
+
+        </div>
+    
+    </section> 
+    </main>
+   <footer>LCAT 08/16/2017</footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+ crossorigin="anonymous"></script>
+          
+    <script>
+    $(function(){
+      //function to print the data on the screen  
+        function renterList(dataList){
+            var dataFinal = $.map(dataList, function(cell, index){ 
+                    var rowList = '<tr class="rented-equipment-row"><td>'+cell.renter+'<input type="hidden" class="user-index" value="' + index + '"></td><td>( '+cell.amount+' ) '+cell.equipment+' '+cell.equipment_model+'</td><td>'+cell.pickup_date+'</td><td>'+cell.return_date+'</td><td><i class="material-icons delete" id="delete-index">delete<input type="hidden" class="user-index-delete" value="' + cell.id + '" ></i></td></tr>';
+                    return rowList;
+                });
+            return dataFinal;
+            
+        }
+    //END: function to print the data on the screen
+        
+    //An array for the list of equipment
+      var equipmentRentedList = [];
+        
+    //Function to create the template for the rented equipment details
+        
+        function rentedEquipmentDetails(currentEquipmentObj){
+            $('#renterDetails').empty();
+            var detailsList = $('<h3 class="box-form" style="display: block">Details: </h3>'
+                            +'<p style="background-color: lightblue; margin: 0px; padding: 0px;">Name: '+currentEquipmentObj.renter+'</p>'
+                            +'<p style="background-color: lightyellow; margin: 0px; padding: 0px;">Equipment: '+currentEquipmentObj.amount+' '+currentEquipmentObj.equipment+' '+currentEquipmentObj.equipment_model+'</p><p style="background-color: lightblue; margin: 0px; padding: 0px;">Pick up date: '+currentEquipmentObj.pickup_date+'</p>'
+                            +'<p style="background-color: lightyellow; margin: 0px; padding: 0px;">Return date: '+currentEquipmentObj.return_date+'</p>');
+            $('#renterDetails').append(detailsList).slideDown();
+        }
+        loadingData();
+        function loadingData(){
+            $('#rentedbody').empty();
+            $.ajax('/LCATProject/PHP/get_rented_equipment.php', {
+            type: 'GET',
+            dataType:'json',
+            success: function(data){ 
+                
+                equipmentRentedList = data;
+                
+                var elementResult = renterList(data);
+                $('#rentedbody').append(elementResult);
+                
+                // the data is in the page, now wire up the click event
+                $(".rented-equipment-row").click(function() {
+                    
+                    var rowIndex = $(this).find(".user-index").val();
+                    
+                    var currentEquipmentRented = equipmentRentedList[rowIndex];
+                    rentedEquipmentDetails(currentEquipmentRented);
+                    
+                });
+                
+                 $(".material-icons").click(function() {
+                     var currentRow = $(this).parents('.rented-equipment-row');
+                     var rowId = $(currentRow).find(".user-index-delete").val();
+                     var rowIndex = $(currentRow).find('.user-index').val();
+                    
+                    var currentEquipmentToDelete = equipmentRentedList[rowIndex];
+                    var confirmed = confirm(currentEquipmentToDelete.renter + ' About to delete List # ' + rowIndex);
+                     
+                     if(confirmed){
+                         
+                         $.ajax({
+                             url:'/LCATProject/PHP/delete_rented_equipment.php',
+                             type:'POST',
+                             dataType:'json',
+                             data:{id : rowId},
+                             success: function(dataDeleted){
+                                 loadingData();
+                                 alert('ID deleted: #'+dataDeleted[0].id);
+                                 
+                             }
+                         });
+                         
+                     }
+                });
+                
+            },
+            error: function(result, error, errorMessage){ 
+                alert('There is an error: Result: ' +result + ', ' + 'error: ' +error+ ' errorMessage: ' + errorMessage)
+            },
+            
+            beforeSend: function() {
+                $('#rentedbody').addClass('aniCircle', 'aniCircle1', 'aniCircle2');
+            },
+            complete: function() {
+                $('#rentedbody').removeClass('aniCircle', 'aniCircle1', 'aniCircle2');
+            }
+            
+        });//end of the ajax
+        
+        }
+        // create a function that takes the rented equipment object
+        // and displays the information on the page
+       
+    });
+        
+    </script>
+</body>
+
+</html>

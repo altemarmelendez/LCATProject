@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="main.css"/>
+    
+    
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    
+</head>
+
+<body>
+    <header><i class="material-icons md-18"><i class="material-icons">assignment_turned_in</i></i>LCAT Portable Equipment Request Form</header>
+    <main class="cubre">  
+    <aside id="menu-area">
+        
+        <nav>
+            <a class="btn-nav currentpage" href="home.html"><i class="material-icons derecha">home</i>Home</a>
+            <a class="currentpage" href="lcat-eq.html"><i class="material-icons derecha">add</i>New Request</a>
+            <a class="btn-nav" href="equipment.html"><i class="material-icons derecha">videocam</i>Equipment</a>
+            <a class="btn-nav" href="renters.html"><i class="material-icons derecha">face</i>Renters</a>
+            <a class="btn-nav" href="consult.html"><i class="material-icons derecha">book</i>Consult</a>
+        </nav>
+        
+    </aside>
+    <section id="main-area">
+        <div class="box-form"> Renter Information</div>
+            <form>
+ 
+            <label for="label-name">Name of the Renter</label>
+            <br>
+            <div id ="dropDownRenters">
+               <!-- select for the renters' names  -->
+            </div>
+                
+                 <div id ="rentersDetails">
+               <!-- Renters details  -->
+            </div>
+
+
+     
+        <div class="box-form"> Pick up/Return Information</div>  
+         
+            <label for="label-pick" style="padding-left: 4px">Pick Up Date</label>
+            <label for="label-return" style="padding-left: 70px">Return Date</label>
+             <br>
+            <input id="label-pick" style="margin-left: 2px" type="date"/>
+            <input id="label-return"  style="margin-left: 4px" placeholder="Return" type="date"/>
+            
+            <br>
+            
+                <div class="box-form"> Equipment Information <div id="add-items" style="display: inline;">
+                    <div class="btn add-item" id="addEquipmentBtn" style="font-size: 10px"> Add Equipment</div>
+             </div>
+                </div>      
+                
+      <!-- Add the items for the renters  -->        
+    <div class='addingItems' id="addItems"> </div>  
+      <!-- Add the items for the renters  --> 
+                <br>
+                <div id="save">Save Changes</div><div id="cancel">Cancel</div>
+        </form>
+    </section> 
+    </main>
+    <footer>LCAT 08/16/2017</footer> 
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+ crossorigin="anonymous"></script>
+    <script>
+        $(function() {
+            var index = 0;
+            var equipmentList;
+            var listEquipmentToRent = [];
+            var ListModel;
+            var ListType;
+            var listRenterName;
+            var detailRentersData = '';
+            var detailRentersGlobal = [];
+            var renterSelectedId = '';
+            var listEquipmentAndRenter = [];
+                       
+           //Selecting renters
+            $('form').on('change','select', function(){
+               
+                displayDetails(detailRentersGlobal);
+            });
+            
+            //Function to Display details
+            function displayDetails(detailsRenters){
+                $('form').find('#rentersDetails').empty();
+                var valueSelected = $('form').find('.listNameRenterDropDown option:selected').val();
+                for(var i=0; i < detailsRenters.length ; i++){
+                    if (detailsRenters[i].id == valueSelected){
+                        detailRentersData = '<div class="box-form"></div><p style="background-color:#99BBDD;margin: 0; padding:0; color: darkblue;">'+detailsRenters[i].first_name +' ' +detailsRenters[i].last_name+'<p style="background-color:#CCDDDD; margin: 0; padding:0;">'+detailsRenters[i].address +', '+detailsRenters[i].city+' '+detailsRenters[i].zip_code+'</p>'+'<p style="background-color:#CCDDDD; margin: 0; padding:0;">Phone: '+detailsRenters[i].phone +'</p><p style="background-color:#CCDDDD;margin: 0; padding:0;">Email: '+detailsRenters[i].email+'</p>';
+                    }
+                } 
+
+                $('form').find('#rentersDetails').append(detailRentersData);
+                //Id to search the renter.
+                renterSelectedId = valueSelected;
+            }
+            
+            //Adding Items
+            function addEquipment(valueEquipment, amount){
+                
+                var addingItems = $('<div class="add-stuff"><div class="texts">'+ amount +' '+ valueEquipment +'</div><div class="icons-pos"><i class="material-icons btn-save-item" id="edit-elements">create</i><i class="material-icons btn-trash-item" id="delete-btn">clear<input class="delete-equipment-row" type="hidden" value="'+ index +'"></i></div></div>');
+                listEquipmentToRent.push(addingItems);
+                $('#addItems').append(addingItems);
+                index ++;  
+            }
+            
+            //Changing Items
+             function changeEquipment(valueEquipment, amount, indexRow){
+                
+                var addingItems = $('<div class="add-stuff"><div class="texts">'+ amount +' '+ valueEquipment +'</div><div class="icons-pos"><i class="material-icons btn-save-item" id="edit-elements">create</i><i class="material-icons btn-trash-item" id="delete-btn">clear<input class="delete-equipment-row" type="hidden" value="'+ indexRow +'"></i></div></div>');
+                 
+                listEquipmentToRent.splice(indexRow,1,addingItems);
+                 var list1 = listEquipmentToRent;
+                printEquipmentList(list1); 
+            }
+            
+            //scrolldown the Items
+            function processDropdown() {
+                
+                var dropdownOptions = '';
+                for(var i = 0; i < equipmentList.length; i++)
+                {
+                    var item = equipmentList[i];
+                    dropdownOptions += '<option value="' + item.number + '">' + item.type + "</option>";
+                } 
+                return dropdownOptions;
+            }
+            
+            //Fetch Equipment Model from PHP/MySQL
+            
+            $.ajax({
+                url:'/LCATProject/PHP/get_equipment_model.php',
+                type: 'GET',
+                dataType: 'json',
+                success: function(dataEquipModel){
+                    var dropListModel = '';
+                    for (var l=0; l < dataEquipModel.length ; l++){
+                        dropListModel += '<option value="'+dataEquipModel[l].id+'" >'+ dataEquipModel[l].equipment_model +'</option>';
+                    }
+                    //Adding dropListModel to the list input
+                     ListModel = '<select class="equipModelDropDown">'+dropListModel+'</select>';                 
+                }
+            });
+            
+            //Fetch Equipment Type from PHP/MySQL
+            
+            $.ajax({
+                url:'/LCATProject/PHP/get_equipment_type.php',
+                type: 'GET',
+                dataType: 'json',
+                success: function(dataEquipType){
+                    var dropListType = '';
+                    for (var l=0; l < dataEquipType.length ; l++){
+                        dropListType += '<option value="'+dataEquipType[l].id+'" >'+ dataEquipType[l].equipment_type_name +'</option>';
+                    }
+                    //Adding dropListModel to the list input
+                     ListType = dropListType;                 
+                }
+            });
+        
+            
+            // Loanding the renter names
+            
+            $.ajax({
+                url:'/LCATProject/PHP/get_renters.php',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (rentersData){
+                    var rentersOption = '';
+                    var detailsRenters = [];
+                    for(var x=0; x < rentersData.length ; x++){
+                        rentersOption += '<option value="'+rentersData[x].id+'" >' + rentersData[x].first_name + ' '+rentersData[x].last_name+'</option>';
+                    }
+                    
+                    for(var x=0; x < rentersData.length ; x++){
+                        detailsRenters.push({id: rentersData[x].id, first_name: rentersData[x].first_name, last_name: rentersData[x].last_name, address: rentersData[x].address, city: rentersData[x].city, phone: rentersData[x].phone, zip_code: rentersData[x].zip_code, email: rentersData[x].email});
+                    }
+                    
+                   listRenterName = '<select class = "listNameRenterDropDown" style="font-size: 14px">'+ rentersOption +'</select>';
+                    $('form').find('#dropDownRenters').append(listRenterName);
+                    
+                    detailRentersGlobal = detailsRenters;
+                    displayDetails(detailsRenters);
+                    
+                }
+            });
+            
+            
+            // Print new list of equipment to rent 
+            function printEquipmentList(listPrint){
+                
+                $('#addItems').empty();
+                for (var l = 0; l < listPrint.length; l++){
+                    
+                  var itemList = listPrint[l];
+        
+                  $('#addItems').append(itemList);
+                    
+                }
+            }
+            
+            
+            //Adding new Item
+             $('#addEquipmentBtn').click(function(){
+                 var pickUpDay = $('form').find('#label-pick').val();
+                 var returnDay = $('form').find('#label-return').val();
+                 if (pickUpDay == '' || returnDay == '' ){
+                     alert('Select the correct pickup or return date!');
+                     $('form').find('#label-pick').focus();
+                 }else if (pickUpDay <= returnDay){
+                 $("#addItems").append(`
+                    <div class="add-stuff">
+                        <div>
+                            <select class="equipmentDropdown"></select>
+                            <select class="equipmentNumber">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                            </select>
+                        </div>
+                        <div class="modelList"> </div>
+                        <div class="icons-pos"><input type="text" style="margin-left:4px;" class ="note-info" size="25" placeholder="Note" name="note"/>    
+                            <a class="equipment-row-icon" href="#"><i class="material-icons btn-save">save</i></a>
+                            <a class="equipment-row-icon" href="#"><i class="material-icons btn-clear">clear</i></a>
+                        </div>
+                    </div>`);
+                 
+                 $(".add-stuff:last").find(".equipmentDropdown").append(ListType);
+                 
+                 $('.add-stuff:last').find('.modelList').append(ListModel);
+                 
+                 $(".add-stuff:last").find(".btn-save").click(onRowSave);
+                 
+                 $(".add-stuff:last").find(".btn-delete").click(onRowDelete);
+                 
+                 }else{
+                     alert('Pick up date has to be before than Return date!');
+                     $('form').find('#label-pick').val('');
+                     $('form').find('#label-return').val('');
+                     $('form').find('#label-pick').focus();
+                 }
+            });
+            
+            function onRowEdit() {
+                var parentRow = $(this).parents('.add-stuff');
+
+                 var getEqValue = $(parentRow).find('.eqSelectedValue').val();
+                 var getNumValue =  $(parentRow).find('.eqNumberValue').val();
+                 var getEqLabel =  $(parentRow).find('.eqLabel').text();
+                 var getNumLabel =  $(parentRow).find('.eqNumber').text();
+                 var getEqLabel =  $(parentRow).find('.eqNumber').text();
+                 var getEquipModel = $(parentRow).find('.eqModelLabel').text();//Getting Model value
+                 var getEqModelVal = $(parentRow).find('.eqNumberValueModel').val();
+                 var getNoteVal = $(parentRow).find('.noteData').text();
+
+                 $(parentRow).html(`
+                    <div>
+                    <select class="equipmentDropdown"></select>
+                    <select class="equipmentNumber">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                    </select>
+                    </div>
+                    <div class = "modelList"></div><input type="text" style="margin-left:4px;" class ="note-info" size="25" placeholder="Note" name="note"/>
+                    <div class="icons-pos">    
+                        <a class="equipment-row-icon" href="#"><i class="material-icons btn-save">save</i></a>
+                        <a class="equipment-row-icon" href="#"><i class="material-icons btn-cancel">clear</i></a>
+                    </div>
+                `);
+                
+                 var valuesTemplate = '<input type="hidden" class="eqSelectedValue" value="' + getEqValue + '">';
+                 valuesTemplate += '<input type="hidden" class="eqNumberValue" value="' + getNumValue + '">';
+                valuesTemplate += '<input type="hidden" class="eqNumberValueModel" value="' + getEqModelVal + '">';
+                
+                 $(parentRow).append(valuesTemplate)
+
+                 $(parentRow).find(".equipmentDropdown").append(ListType);
+                 $(parentRow).find(".equipmentDropdown").val(getEqValue);
+                 $(parentRow).find(".equipmentNumber").val(getNumValue);
+                 $(parentRow).find('.modelList').append(ListModel);
+                
+                 $(parentRow).find(".equipModelDropDown").val(getEqModelVal);
+                 $(parentRow).find(".note-info").val(getNoteVal);
+
+                 $(parentRow).find('.btn-save').click(onRowSave);
+                 $(parentRow).find('.btn-cancel').click(onRowCancel);
+            }
+            
+            function onRowDelete() {
+                $(this).parents('.add-stuff').remove();
+            }
+            
+            //Canceling the option selected
+            
+            function onRowCancel() {
+                
+                var parentRow = $(this).parents('.add-stuff');
+
+                 var selectedEquipmentValue = $(parentRow).find('.eqSelectedValue').val();
+                  $(parentRow).find('.equipmentDropdown').val(selectedEquipmentValue);
+                 var selectedEquipmentLabel = $(parentRow).find('.equipModelDropDown option:selected').text();
+                 var selectedNumberModel = $(parentRow).find('.equipModelDropDown').val();
+                 var noteText = $(parentRow).find('.note-info').val('');
+                 var selectedNumber = $(parentRow).find('.equipmentNumber').val();
+                 var selectedEquipmentModelValueOption = $(parentRow).find('.equipModelDropDown').val();
+                
+
+                 $(parentRow).addClass('saved-row');
+                 var rowTemplate = '<div><span class="eqLabel">' + selectedEquipmentModelValue + '</span><span class="eqNumber">&nbsp;&nbsp;(' + selectedNumber + ')</span>  Note: </span><span class = "noteData">'+noteText+'</span></div>';
+                 rowTemplate += '<div class="icons-pos">';
+                 rowTemplate += '<a class="equipment-row-icon" href="#">';
+                 rowTemplate += '<i class="material-icons btn-edit">edit</i></a>';
+                 rowTemplate += '<a class="equipment-row-icon" href="#"><i class="material-icons btn-delete">delete</i></a></div>';
+                 rowTemplate += '<input type="hidden" class="eqSelectedValue" value="' + selectedEquipmentValue + '">';
+                 rowTemplate += '<input type="hidden" class="eqNumberValue" value="' + selectedNumber + '">';
+                 rowTemplate += '<input type="hidden" class="eqNumberValueModel" value="' + selectedNumberModel + '">';
+
+                 $(parentRow).html(rowTemplate);
+                 $(parentRow).find('.btn-delete').click(onRowDelete);
+                 $(parentRow).find('.btn-edit').click(onRowEdit);
+            }
+            
+            //Saving the info in the row
+            
+            function onRowSave() {
+                //Values for the array
+                 var parentRow = $(this).parents('.add-stuff');
+                
+                 //Variables of the data in the form
+                 var selectedEquipmentValue = $(parentRow).find('.equipmentDropdown').val();
+                 var selectedEquipmentLabel = $(parentRow).find('.equipmentDropdown option:selected').text();
+                 var selectedEquipmentModelValue = $(parentRow).find('.equipModelDropDown option:selected').text();
+                 var selectedEquipmentModelValueOption = $(parentRow).find('.equipModelDropDown').val();
+
+                 var selectedNumber = $(parentRow).find('.equipmentNumber').val();
+                 var noteText = $(parentRow).find('.note-info').val();
+                 var pickUpDateVal = $('form').find('#label-pick').val();
+                 var returnDateVal = $('form').find('#label-return').val();
+                
+                //Conditions for the dates
+                 if (pickUpDateVal == ''){
+                     //Check if the date was pickup selected
+                    alert('Need to select a pickup date!')
+                }else if(returnDateVal == ''){
+                    //Check if the date was return selected
+                    alert('Need to select a return date!');
+                }else{ 
+                    //Save the the list of equiment
+                listEquipmentAndRenter.push({renter_id:renterSelectedId, equipment_id: selectedEquipmentValue , equipment_model_id: selectedEquipmentModelValueOption, amount: selectedNumber, note: noteText, pickup_date: pickUpDateVal, return_date: returnDateVal, rented: '1'});
+                    
+                   //Display the row in list
+                 $(parentRow).addClass('saved-row');
+                 var rowTemplate = '<div><span class="eqModelLabel">'+ selectedEquipmentModelValue + '</span><span>: </span><span class="eqLabel">'+ selectedEquipmentLabel + '</span><span class="eqNumber">&nbsp;&nbsp;(' + selectedNumber + ')  Note: </span><span class = "noteData">'+noteText+'</span></div>';
+                 rowTemplate += '<div class="icons-pos">';
+                 rowTemplate += '<a class="equipment-row-icon" href="#">';
+                 rowTemplate += '<i class="material-icons btn-edit">edit</i></a>';
+                 rowTemplate += '<a class="equipment-row-icon" href="#"><i class="material-icons btn-delete">delete</i></a></div>';
+                 rowTemplate += '<input type="hidden" class="eqSelectedValue" value="' + selectedEquipmentValue + '">';
+                 rowTemplate += '<input type="hidden" class="eqNumberValue" value="' + selectedNumber + '">';
+                rowTemplate += '<input type="hidden" class="eqNumberValueModel" value="' + selectedEquipmentModelValueOption + '">';
+
+                 $(parentRow).html(rowTemplate);
+                 $(parentRow).find('.btn-delete').click(onRowDelete);
+                 $(parentRow).find('.btn-edit').click(onRowEdit);
+                
+                 }//End of the conditions
+                
+            }//End of onRowSave
+            
+                //Saving data at database
+                $('form').on('click','#save', function(){
+ 
+                    $.ajax('/LCATProject/PHP/insert_rented_equipment.php', {
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {equipmentrenter : JSON.stringify(listEquipmentAndRenter)},
+                        success: function(dataSent){
+                            var equipments ='';
+                            for (var x=0; x < dataSent.length; x++){
+                                
+                                equipments += dataSent[x].equipment+' ';
+                            }
+                            alert('Equipment rented: '+equipments);
+                        },
+                        complete: function(){
+                            //clear the data in form and the array listEquipmentAndRenter  
+                            $('#addItems').empty();
+                            listEquipmentAndRenter = [];
+                            $('form').find('#label-pick').val('');
+                            $('form').find('#label-return').val('');
+                        }
+                    });
+                });
+
+            //Deleting an Item
+            $('#addItems').on('click','#delete-btn', function(){
+                
+                var indexRow = $(this).find('.delete-equipment-row').val();
+                
+                listEquipmentToRent.splice(indexRow,1);
+                
+                listEquipmentAndRenter.splice(indexRow,1);
+                
+                //Eliminating the old value and change it for the new one
+                for (var l=0; l < listEquipmentToRent.length; l++){
+                    
+                    var itemListDelete = listEquipmentToRent[l];
+                    itemListDelete.find('.delete-equipment-row').attr('value',l);
+                    
+                }
+                index --;
+                printEquipmentList(listEquipmentToRent);
+            });
+            
+            //Editing an Item
+           $('.addingItems').on('click', '#edit-elements', function(){
+               
+               var indexRow = $(this).next().find('.delete-equipment-row').val();
+               var currentElement = listEquipmentToRent[indexRow];
+               
+               currentElement.find('.texts').empty();
+               
+               var listDropdown = $('<input id="equipmentLabel" list="equipmentDropdown" placeholder="SELECT EQUIPMENT"/><datalist id="equipmentDropdown"></datalist>');
+               
+               var listAmount = $('<input id="numbers" list="number" size=3 /><datalist id="number"><option value=1><option value=2><option value=3><option value=4><option value=5><option value=6><option value=7><option value=8><option value=9></datalist>');
+               
+               var buttonChange = $('<i class="material-icons btn-save" id="save-edit">save</i>');
+               
+               currentElement.find('.texts').html(listAmount).append(listDropdown).append(buttonChange);
+               
+               $('#save-edit').click( function(){
+                   var amountValue = listAmount.val();
+                   var dropdownValue = listDropdown.val();
+                   
+                   if(amountValue == '' || dropdownValue== ''){
+                       
+                       alert('No equipment or any amount selected!');
+                       
+                   }else{
+                       
+                   changeEquipment(dropdownValue, amountValue, indexRow);
+                   
+                   }
+               });
+               
+           });
+            
+        });
+    
+    </script>
+</body>
+
+</html>
